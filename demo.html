@@ -2,12 +2,16 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="viewport" content="user-scalable=yes">
   <title>work</title>
   <link rel="stylesheet" href="./layui/css/layui.css">
 </head>
+<style type="text/css">
 
-<body>
+
+</style>
+
+<body id="div1">
 	<h2 style="margin-left: 110px;">欢迎<i style="color:blue;" id="box"></i>来到聊天室</h2>
 	<form class="layui-form" action="">
   <div class="layui-form-item layui-form-text">
@@ -34,6 +38,35 @@
 <script src="./layui/layui.js"></script>
 <script src="./layui/jquery-1.7.2.min.js"></script>
 <script type="text/javascript">
+
+function setHeight(obj)
+{
+  var temHeight=null;
+  //FF
+  if(window.innerHeight)
+  {
+    temHeight=window.innerHeight;//包括页面高度和滚动条高度
+  }
+  else 
+  {
+     temHeight=document.body&&document.body.clientHeight;
+  }
+  if(temHeight>document.body.clientHeight)//页面高度
+  {
+     oDiv.style.height=temHeight+"px";
+  }
+  else
+  {
+    oDiv.style.height=document.body.clientHeight+"px";
+  }
+}
+window.onload=function()
+{
+  var oDiv=document.getElementById("div1");
+  getHeight(oDiv);
+}
+
+
 
 layui.use('form', function(){
   var form = layui.form;
