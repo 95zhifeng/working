@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <title>work</title>
+  <link rel="stylesheet" href="./layui/css/layui.css">
+</head>
+
+<body>
+	<h2 style="margin-left: 110px;">欢迎<i style="color:blue;" id="box"></i>来到聊天室</h2>
+	<form class="layui-form" action="">
+  <div class="layui-form-item layui-form-text">
+    <label class="layui-form-label"></label>
+    <div class="layui-input-block">
+      <textarea style="height: 600px;"  placeholder="" readonly="true" class="layui-textarea" id="textarea"></textarea>
+    </div>
+  </div>
+  <div class="layui-form-item layui-form-text">
+    <label class="layui-form-label">请输入内容</label>
+    <div class="layui-input-block">
+      <textarea name="desc" id="write" placeholder="请输入内容" class="layui-textarea"></textarea>
+    </div>
+  </div>
+  <div class="layui-form-item">
+    <div class="layui-input-block">
+      <input type="button" class="layui-btn"  id="btn"  value="发送">
+      <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+    </div>
+  </div>
+</form>
+</body>
+</html>
+<script src="./layui/layui.js"></script>
+<script src="./layui/jquery-1.7.2.min.js"></script>
+<script type="text/javascript">
+
+layui.use('form', function(){
+  var form = layui.form;
+  layer.msg("连接成功");
+});
+// 假设服务端ip为127.0.0.1
+var ws = null; //初始为null
+var isLogin = false; //是否登录到服务器上
+var name = 'user_'+Math.floor(Math.random()*100); 
+$(function(){
+	var object = new Object;
+	object.content = '进入聊天室';
+	object.name = name;
+
+	twrite = JSON.stringify(object);
+	ws = new WebSocket("ws://127.0.0.1:2000");
+	ws.onopen = function() {
+      ws.send(twrite);
+	};
+
+	ws.onmessage = function(e) {
+		var data = JSON.parse(e.data);
+		console.log(data);
+		$("#box").html(data.client_name);
+		$("#textarea").append(data.client_name+'   '+data.time+'\n'+data.content+'\n');
+	};
+    ws.onclose = function(ws){
+        isLogin = false;
+    }
+})
+
+
+$('#btn').click(function(){
+	
+	
+	// send =  $.toJSON(twrite);
+	var object = new Object;
+	var text = $('#write').val()
+	if(!text){
+		return false;
+	}
+	object.content = text;
+	object.name = name;
+
+	twrite = JSON.stringify(object);
+	ws.send(twrite); //发送消息到服务端
+	ws.onmessage = function(e) {
+		var data = JSON.parse(e.data);
+		console.log(data);
+		$("#textarea").append(data.client_name+'   '+data.time+'\n'+data.content+'\n');
+	};
+
+
+	var scrollTop = $("#textarea")[0].scrollHeight;
+	$("#textarea").scrollTop(scrollTop);
+	if(scrollTop > 600){
+		$("#textarea").html('')
+	}
+})
+
+
+
+
+</script>
